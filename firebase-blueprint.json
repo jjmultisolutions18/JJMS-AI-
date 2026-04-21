@@ -1,0 +1,121 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Platform user with role-based access",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "description": "User email" },
+        "displayName": { "type": "string" },
+        "role": {
+          "type": "string",
+          "enum": ["ADMIN", "LINE MANAGER", "PROGRAMME COORDINATOR", "MENTOR", "INNOVATOR"]
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Innovation": {
+      "title": "Innovation",
+      "description": "An innovation project or idea",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "problem": { "type": "string" },
+        "solution": { "type": "string" },
+        "targetMarket": { "type": "string" },
+        "stage": {
+          "type": "string",
+          "enum": [
+            "STAGE 0: Pipeline & Awareness",
+            "STAGE 1: Ideation",
+            "STAGE 2: Technology Development",
+            "STAGE 3: Commercialisation"
+          ]
+        },
+        "innovatorId": { "type": "string", "description": "UID of the owner" },
+        "programmeId": { "type": "string", "description": "Associated programme ID" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "innovatorId", "stage"]
+    },
+    "Programme": {
+      "title": "Programme",
+      "description": "An innovation programme",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "coordinatorId": { "type": "string" },
+        "managerId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "coordinatorId"]
+    },
+    "Evaluation": {
+      "title": "Evaluation",
+      "description": "Scoring for an innovation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "innovationId": { "type": "string" },
+        "evaluatorId": { "type": "string" },
+        "scores": {
+          "type": "object",
+          "properties": {
+            "innovation": { "type": "number", "minimum": 0, "maximum": 30 },
+            "feasibility": { "type": "number", "minimum": 0, "maximum": 25 },
+            "impact": { "type": "number", "minimum": 0, "maximum": 25 },
+            "marketPotential": { "type": "number", "minimum": 0, "maximum": 20 }
+          }
+        },
+        "totalScore": { "type": "number" },
+        "swot": {
+          "type": "object",
+          "properties": {
+            "strengths": { "type": "array", "items": { "type": "string" } },
+            "weaknesses": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "recommendation": { "type": "string", "enum": ["Proceed", "Improve", "Reject"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["innovationId", "evaluatorId", "scores"]
+    },
+    "System": {
+      "title": "System",
+      "description": "System metadata and health checks",
+      "type": "object",
+      "properties": {
+        "status": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/test/connection": {
+      "schema": "System",
+      "description": "Public connectivity test document"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/innovations/{innovationId}": {
+      "schema": "Innovation",
+      "description": "Innovation projects"
+    },
+    "/programmes/{programmeId}": {
+      "schema": "Programme",
+      "description": "Innovation programmes"
+    },
+    "/evaluations/{evaluationId}": {
+      "schema": "Evaluation",
+      "description": "Innovation evaluations"
+    }
+  }
+}

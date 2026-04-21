@@ -5,6 +5,8 @@ export interface Message {
   timestamp: Date;
 }
 
+export type UserRole = 'ADMIN' | 'LINE MANAGER' | 'PROGRAMME COORDINATOR' | 'MENTOR' | 'INNOVATOR';
+
 export type InnovationStage = 'STAGE 0: Pipeline & Awareness' | 'STAGE 1: Ideation' | 'STAGE 2: Technology Development' | 'STAGE 3: Commercialisation';
 
 export interface InnovationIdea {

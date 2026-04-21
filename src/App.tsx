@@ -5,10 +5,15 @@ import { InnovationForm } from './components/InnovationForm';
 import { DocumentTools } from './components/DocumentTools';
 import { ProgrammeManagerTools } from './components/ProgrammeManagerTools';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { MapPin, Info, ExternalLink, Hammer, TrendingUp } from 'lucide-react';
+import { MapPin, Info, ExternalLink, Hammer, TrendingUp, LogOut, Loader2 } from 'lucide-react';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { useAuth } from './components/FirebaseProvider';
+import { Login } from './components/Login';
+import { auth } from './lib/firebase';
+import { Button } from '@/components/ui/button';
 
 export default function App() {
+  const { user, loading, role } = useAuth();
   const [activeTab, setActiveTab] = React.useState('chat');
   const [initialPrompt, setInitialPrompt] = React.useState<string | null>(null);
 
@@ -16,6 +21,21 @@ export default function App() {
     setInitialPrompt(prompt);
     setActiveTab('chat');
   };
+
+  const handleSignOut = () => auth.signOut();
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-slate-50 gap-4">
+        <Loader2 className="w-10 h-10 text-orange-600 animate-spin" />
+        <p className="text-sm font-medium text-slate-600">Loading Innovation Portal...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Login />;
+  }
 
   return (
     <TooltipProvider>
@@ -29,14 +49,31 @@ export default function App() {
                 {activeTab.replace('-', ' ')}
               </h2>
               <div className="h-4 w-[1px] bg-slate-200" />
-              <p className="text-xs text-slate-500">
-                JJ Multi Solutions Innovation Portal
-              </p>
+              <div className="flex flex-col">
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight leading-tight">
+                  {user.email}
+                </p>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">
+                    {role || 'INNOVATOR'}
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
               <div className="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-bold rounded border border-green-100 uppercase tracking-tight">
                 System Active
               </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleSignOut}
+                className="text-slate-500 hover:text-red-600 hover:bg-red-50 gap-2"
+              >
+                <LogOut size={16} />
+                <span className="hidden sm:inline">Sign Out</span>
+              </Button>
             </div>
           </header>
 

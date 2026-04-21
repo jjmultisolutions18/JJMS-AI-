@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useAuth } from './FirebaseProvider';
 
 interface SidebarProps {
   activeTab: string;
@@ -20,15 +21,21 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
+  const { role } = useAuth();
+  
   const menuItems = [
-    { id: 'chat', label: 'Assistant', icon: LayoutDashboard },
-    { id: 'innovation', label: 'Innovation Support', icon: Lightbulb },
-    { id: 'programme', label: 'Programme Management', icon: BarChart3 },
-    { id: 'business', label: 'Business Dev', icon: TrendingUp },
-    { id: 'documents', label: 'Documents', icon: FileText },
-    { id: 'maker', label: 'Maker Space', icon: Hammer },
-    { id: 'sa-context', label: 'SA Institutions', icon: MapPin },
+    { id: 'chat', label: 'Assistant', icon: LayoutDashboard, roles: ['ADMIN', 'LINE MANAGER', 'PROGRAMME COORDINATOR', 'MENTOR', 'INNOVATOR'] },
+    { id: 'innovation', label: 'Innovation Support', icon: Lightbulb, roles: ['ADMIN', 'INNOVATOR'] },
+    { id: 'programme', label: 'Programme Management', icon: BarChart3, roles: ['ADMIN', 'LINE MANAGER', 'PROGRAMME COORDINATOR'] },
+    { id: 'business', label: 'Business Dev', icon: TrendingUp, roles: ['ADMIN', 'PROGRAMME COORDINATOR', 'MENTOR', 'INNOVATOR'] },
+    { id: 'documents', label: 'Documents', icon: FileText, roles: ['ADMIN', 'PROGRAMME COORDINATOR', 'MENTOR', 'INNOVATOR'] },
+    { id: 'maker', label: 'Maker Space', icon: Hammer, roles: ['ADMIN', 'MENTOR', 'INNOVATOR'] },
+    { id: 'sa-context', label: 'SA Institutions', icon: MapPin, roles: ['ADMIN', 'LINE MANAGER', 'PROGRAMME COORDINATOR', 'MENTOR', 'INNOVATOR'] },
   ];
+
+  const filteredMenuItems = menuItems.filter(item => 
+    !role || item.roles.includes(role)
+  );
 
   return (
     <div className="w-64 bg-slate-900 text-slate-300 flex flex-col h-full border-r border-slate-800">
@@ -47,7 +54,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       <Separator className="bg-slate-800" />
 
       <nav className="flex-1 p-4 space-y-2">
-        {menuItems.map((item) => (
+        {filteredMenuItems.map((item) => (
           <Button
             key={item.id}
             variant={activeTab === item.id ? 'secondary' : 'ghost'}
