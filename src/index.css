@@ -46,6 +46,11 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+
+    /* Command Centre Vars */
+    --tech-paper: #F0F2F5;
+    --tech-ink: #0F172A;
+    --tech-line: rgba(15, 23, 42, 0.05);
 }
 
 :root {
@@ -126,7 +131,15 @@
     }
   html {
     @apply font-sans;
-    }
+  }
+  
+  /* Recipe 1: Technical Grid Utility */
+  .technical-grid {
+    background-image: 
+      linear-gradient(to right, var(--tech-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--tech-line) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
 }
 
 .prose h1 { @apply text-xl font-bold mb-4 mt-6; }

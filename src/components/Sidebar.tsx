@@ -7,6 +7,7 @@ import {
   HelpCircle,
   MapPin,
   Hammer,
+  ShieldCheck,
   TrendingUp,
   BarChart3
 } from 'lucide-react';
@@ -24,13 +25,14 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const { role } = useAuth();
   
   const menuItems = [
-    { id: 'chat', label: 'Assistant', icon: LayoutDashboard, roles: ['ADMIN', 'LINE MANAGER', 'PROGRAMME COORDINATOR', 'MENTOR', 'INNOVATOR'] },
-    { id: 'innovation', label: 'Innovation Support', icon: Lightbulb, roles: ['ADMIN', 'INNOVATOR'] },
-    { id: 'programme', label: 'Programme Management', icon: BarChart3, roles: ['ADMIN', 'LINE MANAGER', 'PROGRAMME COORDINATOR'] },
-    { id: 'business', label: 'Business Dev', icon: TrendingUp, roles: ['ADMIN', 'PROGRAMME COORDINATOR', 'MENTOR', 'INNOVATOR'] },
-    { id: 'documents', label: 'Documents', icon: FileText, roles: ['ADMIN', 'PROGRAMME COORDINATOR', 'MENTOR', 'INNOVATOR'] },
-    { id: 'maker', label: 'Maker Space', icon: Hammer, roles: ['ADMIN', 'MENTOR', 'INNOVATOR'] },
-    { id: 'sa-context', label: 'SA Institutions', icon: MapPin, roles: ['ADMIN', 'LINE MANAGER', 'PROGRAMME COORDINATOR', 'MENTOR', 'INNOVATOR'] },
+    { id: 'chat', label: 'Intelligence AI', icon: LayoutDashboard, roles: ['ADMIN', 'MANAGER', 'COORDINATOR', 'MENTOR', 'INNOVATOR'] },
+    { id: 'innovation', label: 'Innovation Portfolio', icon: Lightbulb, roles: ['ADMIN', 'MANAGER', 'COORDINATOR', 'MENTOR', 'INNOVATOR'] },
+    { id: 'programme', label: 'Programme Ops', icon: BarChart3, roles: ['ADMIN', 'MANAGER', 'COORDINATOR'] },
+    { id: 'manager', label: 'Strategic Oversight', icon: ShieldCheck, roles: ['ADMIN', 'MANAGER'] },
+    { id: 'admin', label: 'System Governance', icon: Settings, roles: ['ADMIN'] },
+    { id: 'business', label: 'Business Dev', icon: TrendingUp, roles: ['ADMIN', 'COORDINATOR', 'MENTOR', 'INNOVATOR'] },
+    { id: 'documents', label: 'Document Vault', icon: FileText, roles: ['ADMIN', 'COORDINATOR', 'MENTOR', 'INNOVATOR'] },
+    { id: 'sa-context', label: 'Institutional Map', icon: MapPin, roles: ['ADMIN', 'MANAGER', 'COORDINATOR', 'MENTOR', 'INNOVATOR'] },
   ];
 
   const filteredMenuItems = menuItems.filter(item => 

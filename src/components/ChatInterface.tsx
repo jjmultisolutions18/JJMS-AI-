@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
 import { generateResponse } from '@/src/services/geminiService';
 import { Message } from '@/src/types';
+import { useAuth } from './FirebaseProvider';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -15,11 +16,12 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ initialPrompt, onPromptHandled }: ChatInterfaceProps) {
+  const { role } = useAuth();
   const [messages, setMessages] = React.useState<Message[]>([
     {
       id: '1',
       role: 'model',
-      content: "Hello! I am JJMS AI, your Innovation and Business Support Assistant. How can I help you today? You can share an idea, ask for business advice, or request help with document generation.",
+      content: "Hello! I am the JJMS Command Centre AI. I'm here to support your institutional innovation goals. How can I assist you in your current role today?",
       timestamp: new Date(),
     },
   ]);
@@ -43,7 +45,7 @@ export function ChatInterface({ initialPrompt, onPromptHandled }: ChatInterfaceP
     if (!text.trim() || isLoading) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       role: 'user',
       content: text,
       timestamp: new Date(),
@@ -57,10 +59,10 @@ export function ChatInterface({ initialPrompt, onPromptHandled }: ChatInterfaceP
       parts: [{ text: m.content }],
     }));
 
-    const aiResponse = await generateResponse(text, history);
+    const aiResponse = await generateResponse(text, history, role || 'INNOVATOR');
 
     const modelMessage: Message = {
-      id: (Date.now() + 1).toString(),
+      id: crypto.randomUUID(),
       role: 'model',
       content: aiResponse,
       timestamp: new Date(),

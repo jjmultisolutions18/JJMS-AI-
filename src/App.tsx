@@ -3,7 +3,10 @@ import { Sidebar } from './components/Sidebar';
 import { ChatInterface } from './components/ChatInterface';
 import { InnovationForm } from './components/InnovationForm';
 import { DocumentTools } from './components/DocumentTools';
-import { ProgrammeManagerTools } from './components/ProgrammeManagerTools';
+import { ProjectDashboard } from './components/ProjectDashboard';
+import { ProgrammeDashboard } from './components/ProgrammeDashboard';
+import { SupervisoryDashboard } from './components/SupervisoryDashboard';
+import { AdminPortal } from './components/AdminPortal';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { MapPin, Info, ExternalLink, Hammer, TrendingUp, LogOut, Loader2 } from 'lucide-react';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -39,7 +42,7 @@ export default function App() {
 
   return (
     <TooltipProvider>
-      <div className="flex h-screen bg-slate-50 text-slate-900 font-sans">
+      <div className="flex h-screen bg-slate-50 text-slate-900 font-sans technical-grid">
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         
         <main className="flex-1 flex flex-col overflow-hidden">
@@ -86,6 +89,10 @@ export default function App() {
             )}
 
             {activeTab === 'innovation' && (
+              <ProjectDashboard onSelect={handleFormSubmit} />
+            )}
+
+            {activeTab === 'innovation-form' && (
               <InnovationForm onSubmit={handleFormSubmit} />
             )}
 
@@ -94,7 +101,15 @@ export default function App() {
             )}
 
             {activeTab === 'programme' && (
-              <ProgrammeManagerTools onSelect={handleFormSubmit} />
+              <ProgrammeDashboard onSelect={handleFormSubmit} />
+            )}
+
+            {activeTab === 'manager' && (
+              <SupervisoryDashboard />
+            )}
+
+            {activeTab === 'admin' && (
+              <AdminPortal />
             )}
 
             {activeTab === 'sa-context' && (

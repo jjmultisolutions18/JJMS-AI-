@@ -87,6 +87,38 @@
       },
       "required": ["innovationId", "evaluatorId", "scores"]
     },
+    "Project": {
+      "title": "Innovation Project",
+      "description": "Multi-stage innovation artifact",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "currentStage": { "enum": ["STAGE_0", "STAGE_1", "STAGE_2", "STAGE_3"] },
+        "status": { "enum": ["ACTIVE", "PENDING_APPROVAL", "COMPLETED", "ON_HOLD"] },
+        "innovatorId": { "type": "string" },
+        "programmeId": { "type": "string" }
+      }
+    },
+    "Programme": {
+      "title": "Innovation Programme",
+      "description": "High-level department programme",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "budget": { "type": "object" },
+        "managerId": { "type": "string" }
+      }
+    },
+    "Approval": {
+      "title": "Approval Request",
+      "description": "Workflow stage-gate request",
+      "type": "object",
+      "properties": {
+        "projectId": { "type": "string" },
+        "status": { "enum": ["PENDING", "APPROVED", "REJECTED"] },
+        "type": { "type": "string" }
+      }
+    },
     "System": {
       "title": "System",
       "description": "System metadata and health checks",
@@ -97,6 +129,22 @@
     }
   },
   "firestore": {
+    "/programmes/{programmeId}": {
+      "schema": "Programme",
+      "description": "Institutional programmes"
+    },
+    "/programmes/{programmeId}/cohorts/{cohortId}": {
+      "schema": "Cohort",
+      "description": "Cohorts within a programme"
+    },
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Innovation projects"
+    },
+    "/approvals/{approvalId}": {
+      "schema": "Approval",
+      "description": "Approval workflow queue"
+    },
     "/test/connection": {
       "schema": "System",
       "description": "Public connectivity test document"

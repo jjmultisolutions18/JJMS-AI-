@@ -43,6 +43,11 @@ service cloud.firestore {
       return hasRole('ADMIN');
     }
 
+    function isManager() { return hasRole('MANAGER'); }
+    function isCoordinator() { return hasRole('COORDINATOR'); }
+    function isMentor() { return hasRole('MENTOR'); }
+    function isInnovator() { return hasRole('INNOVATOR'); }
+
     // Public Connectivity Test
     match /test/connection {
       allow get: if true;
@@ -53,30 +58,62 @@ service cloud.firestore {
       return data.keys().hasAll(['uid', 'email', 'role']) &&
              data.uid == request.auth.uid &&
              data.email == request.auth.token.email &&
-             data.role in ['ADMIN', 'LINE MANAGER', 'PROGRAMME COORDINATOR', 'MENTOR', 'INNOVATOR'];
+             data.role in ['ADMIN', 'MANAGER', 'COORDINATOR', 'MENTOR', 'INNOVATOR'];
     }
 
-    function isValidInnovation(data) {
-      return data.keys().hasAll(['title', 'innovatorId', 'stage']) &&
+    function isValidProject(data) {
+      return data.keys().hasAll(['title', 'innovatorId', 'currentStage', 'programmeId']) &&
              data.title is string && data.title.size() <= 200 &&
-             data.innovatorId == request.auth.uid &&
-             data.stage in ['STAGE 0: Pipeline & Awareness', 'STAGE 1: Ideation', 'STAGE 2: Technology Development', 'STAGE 3: Commercialisation'];
+             data.currentStage in ['STAGE_0', 'STAGE_1', 'STAGE_2', 'STAGE_3'];
     }
 
     // --- Match Blocks ---
 
     // USERS
     match /users/{userId} {
-      allow get: if isSignedIn() && (isOwner(userId) || isAdmin());
-      allow list: if isAdmin();
+      allow get: if isSignedIn() && (isOwner(userId) || isAdmin() || isManager() || isCoordinator());
+      allow list: if isAdmin() || isManager();
       allow create: if isSignedIn() && isOwner(userId) && isValidUser(incoming());
       allow update: if isSignedIn() && isOwner(userId) && 
-                      incoming().diff(existing()).affectedKeys().hasOnly(['displayName']) &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'department', 'institution']) &&
                       isValidUser(incoming());
       allow delete: if isAdmin();
     }
 
-    // INNOVATIONS
+    // PROJECTS (Normalized collection for Hub/University use)
+    match /projects/{projectId} {
+      allow read: if isSignedIn() && (
+        isAdmin() || isManager() || isCoordinator() || 
+        resource.data.innovatorId == request.auth.uid || 
+        resource.data.mentorId == request.auth.uid
+      );
+      allow create: if isSignedIn() && (isInnovator() || isCoordinator() || isAdmin()) && isValidProject(incoming());
+      allow update: if isSignedIn() && (
+        isAdmin() || isCoordinator() || isManager() ||
+        (resource.data.innovatorId == request.auth.uid && incoming().status != 'COMPLETED')
+      ) && isValidProject(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // PROGRAMMES
+    match /programmes/{programmeId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() || isManager();
+
+      match /cohorts/{cohortId} {
+        allow read: if isSignedIn();
+        allow write: if isAdmin() || isManager() || isCoordinator();
+      }
+    }
+
+    // APPROVALS
+    match /approvals/{approvalId} {
+      allow read: if isSignedIn() && (isAdmin() || isManager() || isCoordinator());
+      allow create: if isSignedIn() && (isCoordinator() || isAdmin());
+      allow update: if isSignedIn() && (isManager() || isAdmin());
+    }
+
+    // LEGACY: INNOVATIONS (Keep for backward compatibility during transition if needed)
     match /innovations/{innovationId} {
       allow get: if isSignedIn();
       allow list: if isSignedIn() && (resource.data.innovatorId == request.auth.uid || isAdmin() || hasRole('PROGRAMME COORDINATOR'));
